@@ -1,0 +1,56 @@
+{
+  "name": "json-repo",
+  "version": "1.0.0",
+  "description": "Read and write data to JSON files using the repository pattern. ",
+  "main": "index.js",
+  "typings": "public_api.d.ts",
+  "scripts": {
+    "test": "nyc mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/iotshaman/json-repo.git"
+  },
+  "keywords": [
+    "json",
+    "repository",
+    "persistence",
+    "node",
+    "nodejs"
+  ],
+  "author": "Kyle Brown",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/iotshaman/json-repo/issues"
+  },
+  "homepage": "https://github.com/iotshaman/json-repo#readme",
+  "devDependencies": {
+    "@types/chai": "^4.2.11",
+    "@types/mocha": "^7.0.2",
+    "@types/node": "^14.0.14",
+    "chai": "^4.2.0",
+    "mocha": "^8.0.1",
+    "nyc": "^15.1.0",
+    "sinon": "^9.0.2",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.5"
+  },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "**/*.d.ts",
+      "**/*.spec.ts",
+      "**/*.js",
+      "coverage/*",
+      "dist/*",
+      "**/*.mock.ts"
+    ],
+    "reporter": [
+      "html",
+      "lcov"
+    ],
+    "all": true
+  }
+}
