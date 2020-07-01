@@ -25,7 +25,7 @@ export abstract class RepositoryContext {
     if (!this.dataPath) return Promise.resolve();
     let keys = Object.keys(this.models);
     let file: {[model: string]: EntityNode[]} = keys.reduce((a, b) => {
-      a[b] = this.models[b].get();
+      a[b] = this.models[b].getNodes();
       return a;
     }, {});
     return this.jsonFileService.writeJson(this.dataPath, file)
@@ -37,7 +37,7 @@ export abstract class RepositoryContext {
     for (var i = 0; i < keys.length; i++) {
       let model = this.models[keys[i]];
       if (!model) continue;
-      model.set(models[keys[i]]);
+      model.setNodes(models[keys[i]]);
     }
   }
 
@@ -45,7 +45,7 @@ export abstract class RepositoryContext {
     let keys = Object.keys(this.models);
     let unsetModels = keys.filter(key => this.models[key].state == 'unset');    
     for (var i = 0; i < unsetModels.length; i++) {
-      this.models[unsetModels[i]].set([]);
+      this.models[unsetModels[i]].setNodes([]);
     }
   }
 
