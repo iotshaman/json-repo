@@ -2,8 +2,6 @@
   "name": "json-repo",
   "version": "1.0.0",
   "description": "Read and write data to JSON files using the repository pattern. ",
-  "main": "index.js",
-  "typings": "public_api.d.ts",
   "scripts": {
     "test": "nyc mocha",
     "build": "tsc"
