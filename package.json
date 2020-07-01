@@ -1,6 +1,6 @@
 {
   "name": "json-repo",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Read and write data to JSON files using the repository pattern. ",
   "scripts": {
     "test": "nyc mocha",
