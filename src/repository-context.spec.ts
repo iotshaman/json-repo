@@ -27,7 +27,7 @@ describe('ContextBase', () => {
   it('get should return empty array', (done) => {
     let context = new NoopContextBase();
     context.initialize().then(_ => {
-      let result: EntityNode[] = context.models.sample.get();
+      let result: EntityNode[] = context.models.sample.getNodes();
       expect(result.length).to.equal(0);
       done();
     });
@@ -39,7 +39,7 @@ describe('ContextBase', () => {
     jsonService.getJson.returns(Promise.resolve(sampleData));
     let context = new NoopContextBase("inmemory", jsonService);
     context.initialize().then(_ => {
-      let result: EntityNode[] = context.models.sample.get();
+      let result: EntityNode[] = context.models.sample.getNodes();
       expect(result.length).to.equal(1);
       done();
     });
