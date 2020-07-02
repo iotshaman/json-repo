@@ -7,9 +7,11 @@ export interface IJsonFileService {
 
 export class JsonFileService implements IJsonFileService {
 
+  _fs: any = fs;
+
   getJson<T>(path: string): Promise<T> {
     return new Promise((res, err) => {
-      fs.readFile(path, 'utf-8', (ex, data) => {
+      this._fs.readFile(path, 'utf-8', (ex, data) => {
         if (ex) return err(new Error(ex.message));
         res(JSON.parse(data));
       })
@@ -19,7 +21,7 @@ export class JsonFileService implements IJsonFileService {
   writeJson<T>(path: string, data: T): Promise<void> {
     return new Promise((res, err) => {
       let contents = JSON.stringify(data);
-      fs.writeFile(path, contents, (ex) => {
+      this._fs.writeFile(path, contents, (ex) => {
         if (ex) return err(new Error(ex.message));
         res();
       })

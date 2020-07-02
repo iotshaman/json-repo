@@ -22,6 +22,7 @@ export abstract class RepositoryContext {
 
   saveChanges = (): Promise<void> => {
     if (!this.dataPath) return Promise.resolve();
+    if (!this.isDirty()) return Promise.resolve();
     let keys = Object.keys(this.models);
     let file = keys.reduce((a, b) => {
       a[b] = this.models[b].getNodes();
@@ -53,6 +54,14 @@ export abstract class RepositoryContext {
     for (var i = 0; i < keys.length; i++) {
       this.models[keys[i]].markCurrent();
     }
+  }
+
+  private isDirty = () => {
+    let keys = Object.keys(this.models);
+    return keys.reduce((a, b) => {
+      let dirty = this.models[b].state == 'dirty';
+      return a || dirty;
+    }, false);
   }
 
 }

@@ -24,7 +24,7 @@ describe('ContextBase', () => {
     });
   });
 
-  it('get should return empty array', (done) => {
+  it('getNodes should return empty array', (done) => {
     let context = new NoopContextBase();
     context.initialize().then(_ => {
       let result: EntityNode[] = context.models.sample.getNodes();
@@ -49,20 +49,34 @@ describe('ContextBase', () => {
     jsonService.getJson = sinon.stub();
     let sampleData = {sample: [{key: '1', value: {key: '1', foo: 'a', bar: 'b'}}]}
     jsonService.getJson.returns(Promise.resolve(sampleData));
-    jsonService.writeJson.callsFake((...args) => {
-      expect(args.length).to.equal(2);
-      expect(args[1].sample).not.to.be.null;
-      return Promise.resolve();
-    });
+    jsonService.writeJson.returns(Promise.resolve(sampleData));
     let context = new NoopContextBase("inmemory", jsonService);
-    context.initialize().then(_ => context.saveChanges()).then(_ => done());
+    context.initialize().then(_ => {
+      context.models.sample.update('1', new SampleData());
+      return context.saveChanges()
+    })
+    .then(_ => {
+      sinon.assert.calledOnce(jsonService.writeJson);
+      done();
+    });
   });
 
-  it('saveChanges outputs json to jsonService.writeJson', (done) => {
+  it('saveChanges does nothing when there is no dataPath variable', (done) => {
     jsonService.getJson = sinon.stub();
     let sampleData = {sample: [{key: '1', value: {key: '1', foo: 'a', bar: 'b'}}]}
     jsonService.getJson.returns(Promise.resolve(sampleData));
     let context = new NoopContextBase(null, jsonService);
+    context.initialize().then(_ => context.saveChanges()).then(_ => {
+      sinon.assert.notCalled(jsonService.writeJson);
+      done();
+    });
+  });
+
+  it('saveChanges does nothing when nothing has changed', (done) => {
+    jsonService.getJson = sinon.stub();
+    let sampleData = {sample: [{key: '1', value: {key: '1', foo: 'a', bar: 'b'}}]}
+    jsonService.getJson.returns(Promise.resolve(sampleData));
+    let context = new NoopContextBase("inmemory", jsonService);
     context.initialize().then(_ => context.saveChanges()).then(_ => {
       sinon.assert.notCalled(jsonService.writeJson);
       done();
