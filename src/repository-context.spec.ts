@@ -24,6 +24,16 @@ describe('ContextBase', () => {
     });
   });
 
+  it('initialize should load models if no file found', (done) => {
+    jsonService.getJson = sinon.stub();
+    jsonService.getJson.returns(Promise.reject());
+    let context = new NoopContextBase("inmemory", jsonService);
+    context.initialize().then(_ => {
+      expect(context.models.sample.state).to.equal('current');
+      done();
+    });
+  });
+
   it('getNodes should return empty array', (done) => {
     let context = new NoopContextBase();
     context.initialize().then(_ => {

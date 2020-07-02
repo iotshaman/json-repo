@@ -17,7 +17,8 @@ export abstract class RepositoryContext {
     if (!this.dataPath) return Promise.resolve().then(_ => this.loadUnsetModels());
     return this.jsonFileService.getJson<{[model: string]: EntityNode[]}>(this.dataPath)
       .then(rslt => this.loadModels(rslt))
-      .then(_ => this.loadUnsetModels());
+      .then(_ => this.loadUnsetModels())
+      .catch(_ => this.loadUnsetModels())
   }
 
   saveChanges = (): Promise<void> => {
