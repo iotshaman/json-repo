@@ -57,6 +57,17 @@ describe('ContextBase', () => {
     let context = new NoopContextBase("inmemory", jsonService);
     context.initialize().then(_ => context.saveChanges()).then(_ => done());
   });
+
+  it('saveChanges outputs json to jsonService.writeJson', (done) => {
+    jsonService.getJson = sinon.stub();
+    let sampleData = {sample: [{key: '1', value: {key: '1', foo: 'a', bar: 'b'}}]}
+    jsonService.getJson.returns(Promise.resolve(sampleData));
+    let context = new NoopContextBase(null, jsonService);
+    context.initialize().then(_ => context.saveChanges()).then(_ => {
+      sinon.assert.notCalled(jsonService.writeJson);
+      done();
+    });
+  });
   
 })
 

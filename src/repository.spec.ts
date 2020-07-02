@@ -57,6 +57,65 @@ describe('Repository', () => {
     expect(repository.state).to.equal('current');
   });
 
+  it('find should return undefined if key does not exist', () => {
+    expect(repository.find('1')).to.be.undefined;
+  });
+
+  it('find should return value if key exists', () => {
+    repository.upsert('1', new SampleData());
+    expect(repository.find('1')).not.to.be.undefined;
+  });
+
+  it('upsert should create new entity', () => {
+    repository.upsert('1', new SampleData());
+    expect(repository.find('1')).not.to.be.undefined;
+  });
+
+  it('upsert should update existing entity', () => {
+    repository.setNodes([{key: '1', value: new SampleData()}]);
+    let newValue = new SampleData(); newValue.foo = 'baz';
+    repository.upsert('1', newValue);
+    expect(repository.find('1').foo).to.equal('baz');
+  });
+
+  it('upsert should set state to dirty', () => {
+    repository.upsert('1', new SampleData());
+    expect(repository.state).to.equal('dirty');
+  });
+
+  it('update should throw error when key does not exist', () => {
+    expect(() => { repository.update('1', new SampleData()); }).to.throw();
+  });
+
+  it('update should update existing entity', () => {
+    repository.setNodes([{key: '1', value: new SampleData()}]);
+    let newValue = new SampleData(); newValue.foo = 'baz';
+    repository.update('1', newValue);
+    expect(repository.find('1')).not.to.be.undefined;
+  });
+
+  it('update should set state to dirty', () => {
+    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.update('1', new SampleData());
+    expect(repository.state).to.equal('dirty');
+  });
+
+  it('delete should throw error when key does not exist', () => {
+    expect(() => { repository.delete('1'); }).to.throw();
+  });
+
+  it('delete should remove existing entity', () => {
+    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.delete('1');
+    expect(repository.find('1')).to.be.undefined;
+  });
+
+  it('delete should set state to dirty', () => {
+    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.delete('1');
+    expect(repository.state).to.equal('dirty');
+  });
+
 });
 
 class SampleData {
