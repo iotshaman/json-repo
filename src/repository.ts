@@ -2,9 +2,9 @@ import { EntityNode } from './entity-node';
 
 export class Repository<T> {
 
-  private _state: string = 'unset';
   get state(): string { return this._state; };
-  private data: {[key: string]: T} = {};
+  protected _state: string = 'unset';
+  protected data: {[key: string]: T} = {};
 
   load = (data: EntityNode[]): void => {
     this.data = {};
