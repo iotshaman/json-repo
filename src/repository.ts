@@ -6,7 +6,7 @@ export class Repository<T> {
   get state(): string { return this._state; };
   private data: {[key: string]: T} = {};
 
-  setNodes = (data: EntityNode[]): void => {
+  load = (data: EntityNode[]): void => {
     this.data = {};
     for (var i = 0; i < data.length; i++) {
       this.data[data[i].key] = data[i].value;
@@ -14,7 +14,7 @@ export class Repository<T> {
     this.markCurrent();
   }
 
-  getNodes = (): EntityNode[] => {
+  extract = (): EntityNode[] => {
     var keys = Object.keys(this.data);
     return keys.map(key => { return {key: key, value: this.data[key]} });
   }
@@ -24,7 +24,7 @@ export class Repository<T> {
   }
 
   where = (filter: (item: T) => boolean): T[] => {
-    return this.getNodes().map(rslt => rslt.value).filter(filter);
+    return this.extract().map(rslt => rslt.value).filter(filter);
   }
 
   add = (key: string, item: T) => {

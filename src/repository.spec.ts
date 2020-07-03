@@ -8,7 +8,7 @@ describe('Repository', () => {
 
   beforeEach(() => {
     repository = new Repository();
-    repository.setNodes([]);
+    repository.load([]);
   })
   
   it('repository state should be unset', () => {
@@ -21,8 +21,8 @@ describe('Repository', () => {
   });
 
   it('get should return entities', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
-    expect(repository.getNodes().length).to.equal(1);
+    repository.load([{key: '1', value: new SampleData()}]);
+    expect(repository.extract().length).to.equal(1);
   });
 
   it('where should return values that match filter', () => {
@@ -31,14 +31,14 @@ describe('Repository', () => {
       {key: '2', value: new SampleData()}
     ];
     sample[0].value.foo = 'foo1';
-    repository.setNodes(sample);
+    repository.load(sample);
     let result = repository.where(item => item.foo == 'foo1');
     expect(result.length).to.equal(1);
   });
 
   it('add should create new entity', () => {
     repository.add('1', new SampleData());
-    expect(repository.getNodes().length).to.equal(1);
+    expect(repository.extract().length).to.equal(1);
   });
 
   it('add should mark repository as dirty', () => {
@@ -72,7 +72,7 @@ describe('Repository', () => {
   });
 
   it('upsert should update existing entity', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.load([{key: '1', value: new SampleData()}]);
     let newValue = new SampleData(); newValue.foo = 'baz';
     repository.upsert('1', newValue);
     expect(repository.find('1').foo).to.equal('baz');
@@ -88,14 +88,14 @@ describe('Repository', () => {
   });
 
   it('update should update existing entity', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.load([{key: '1', value: new SampleData()}]);
     let newValue = new SampleData(); newValue.foo = 'baz';
     repository.update('1', newValue);
     expect(repository.find('1')).not.to.be.undefined;
   });
 
   it('update should set state to dirty', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.load([{key: '1', value: new SampleData()}]);
     repository.update('1', new SampleData());
     expect(repository.state).to.equal('dirty');
   });
@@ -105,13 +105,13 @@ describe('Repository', () => {
   });
 
   it('delete should remove existing entity', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.load([{key: '1', value: new SampleData()}]);
     repository.delete('1');
     expect(repository.find('1')).to.be.undefined;
   });
 
   it('delete should set state to dirty', () => {
-    repository.setNodes([{key: '1', value: new SampleData()}]);
+    repository.load([{key: '1', value: new SampleData()}]);
     repository.delete('1');
     expect(repository.state).to.equal('dirty');
   });

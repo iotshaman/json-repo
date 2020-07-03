@@ -9,14 +9,14 @@ describe('JsonFileService', () => {
     let service = new JsonFileService();
     service._fs.readFile = sinon.stub();
     service._fs.readFile.yields(new Error("NA"));
-    service.getJson("").catch(_ => done());
+    service.getEntityNodes("").catch(_ => done());
   });
 
   it('getJson should return json object', (done) => {
     let service = new JsonFileService();
     service._fs.readFile = sinon.stub();
     service._fs.readFile.yields(null, "{\"foo\": \"bar\"}");
-    service.getJson<{foo: string}>("").then(rslt => {
+    service.getEntityNodes("").then(rslt => {
       expect(rslt.foo).to.equal("bar");
       done();
     })
@@ -26,14 +26,14 @@ describe('JsonFileService', () => {
     let service = new JsonFileService();
     service._fs.writeJson = sinon.stub();
     service._fs.writeJson.yields(new Error("NA"));
-    service.writeJson("", {}).catch(_ => done());
+    service.persistEntityNodes("", {}).catch(_ => done());
   });
 
   it('writeJson should return void promise', (done) => {
     let service = new JsonFileService();
     service._fs.writeFile = sinon.stub();
     service._fs.writeFile.yields(null);
-    service.writeJson("", {}).then(_ => {
+    service.persistEntityNodes("", {}).then(_ => {
       done();
     })
   });
