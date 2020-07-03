@@ -12,7 +12,7 @@ Sometimes as developers we have the need to store and retrieve persistent data, 
 
 ### Installation
 ```sh
-npm install node-json-file-tree --save
+npm install json-repo --save
 ```
 
 ### Quick Start
