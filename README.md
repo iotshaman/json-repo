@@ -28,11 +28,11 @@ export class Foo {
 Next, we need to create an implementation of the base "RepositoryContext" class:
 
 ```ts
-//file: sample-repository.ts
+//file: sample-context.ts
 import { RepositoryContext, Repository } from 'json-repo';
 import { Foo } from './foo';
 
-export class SampleRepository extends RepositoryContext {
+export class SampleDataContext extends RepositoryContext {
   constructor(dataPath: string) { super(dataPath); }
   models = {
     baz: new Repository<Foo>()
@@ -40,20 +40,20 @@ export class SampleRepository extends RepositoryContext {
 }
 ```
 
-Finally, we need to initialize the repository in our application:
+Finally, we need to initialize the context in our application:
 
 ```ts
 import * as path from 'path';
-import { SampleRepository } from './sample-repository';
+import { SampleDataContext } from './sample-context';
 import { Foo } from './foo';
 
 const jsonFilePath = path.join(__dirname, 'db.json');
-let repository = new SampleRepository(jsonFilePath);
-repository.initialize().then(_ => {
-  //you can now use the repository
+let context = new SampleDataContext(jsonFilePath);
+context.initialize().then(_ => {
+  //you can now use the context
   let foo = new Foo(); foo.bar = 'baz';
-  repository.models.baz.add('1', foo);
-  return repository.saveChanges();
+  context.models.baz.add('1', foo);
+  return context.saveChanges();
 });
 ```
 
@@ -69,7 +69,7 @@ The "RepositoryContext" is an abstract class that allows you to communicate with
 //provided from the repository-context.d.ts file
 export declare abstract class RepositoryContext {
   abstract models: {
-    [key: string]: Repository<any>;
+    [key: string]: IRepository<any>;
   };
   constructor(dataPath?: string, entityNodeService?: IEntityNodeService);
   initialize: () => Promise<void>;
@@ -87,25 +87,25 @@ export declare abstract class RepositoryContext {
 
 #### Repository
 
-The "Repository" class is a generic class, with the type argument representing a domain object. Some built-in methods are provided to manage and query the repository; this class can also be extended, if you wish to provide additional functionality. 
+The "Repository" interface is defined as a generic, with the type argument representing a domain object. Some built-in methods are provided to manage and query the repository. The default implementation of IRepository is Repository, and can also be extended if you wish to provide additional functionality. 
 
 ```ts
 //provided from the repository.d.ts file
 export declare class Repository<T> {
-    get state(): string;
-    protected _state: string;
-    protected data: {
-        [key: string]: T;
-    };
-    load: (data: EntityNode[]) => void;
-    extract: () => EntityNode[];
-    find: (key: string) => T;
-    where: (filter: (item: T) => boolean) => T[];
-    add: (key: string, item: T) => void;
-    upsert: (key: string, item: T) => void;
-    update: (key: string, item: T) => void;
-    delete: (key: string) => void;
-    markCurrent: () => void;
+  get state(): string;
+  protected _state: string;
+  protected data: {
+      [key: string]: T;
+  };
+  load: (data: EntityNode[]) => void;
+  extract: () => EntityNode[];
+  find: (key: string) => T;
+  filter: (filter: (item: T) => boolean) => T[];
+  add: (key: string, item: T) => void;
+  addRange: (items: [{key: string, item: T}]) => void;
+  update: (key: string, action: (item: T) => T) => void;
+  delete: (key: string) => void;
+  markCurrent: () => void;
 }
 ```
 
@@ -115,8 +115,8 @@ An "EntityNode" is the core persistent storage block of a repository. When files
 ```ts
 //provided from the entity-node.d.ts file
 export declare class EntityNode {
-    key: string;
-    value: any;
+  key: string;
+  value: any;
 }
 ```
 
@@ -124,8 +124,9 @@ export declare class EntityNode {
 The implementation of "IEntityNodeService" acts as the persistent storage layer, reading to and writing from some storage mechanism. The built-in implementation of IEntityNodeService is calls "JsonFileService", and is provided by default to all "RepositoryContext" objects. If you wish to provide a custom data persistence solution, you can achieve this by creating a custom implementation of IEntityNodeService.
 
 ```ts
+//provided from the entity-node-service.d.ts file
 export interface IEntityNodeService {
-    getEntityNodes(path: string): Promise<{[model: string]: EntityNode[];}>;
-    persistEntityNodes<T>(path: string, data: T): Promise<void>;
+  getEntityNodes(path: string): Promise<{[model: string]: EntityNode[];}>;
+  persistEntityNodes<T>(path: string, data: T): Promise<void>;
 }
 ```

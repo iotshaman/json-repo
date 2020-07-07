@@ -20,19 +20,19 @@ describe('Repository', () => {
     expect(repository.state).to.equal('current');
   });
 
-  it('get should return entities', () => {
+  it('extract should return entities', () => {
     repository.load([{key: '1', value: new SampleData()}]);
     expect(repository.extract().length).to.equal(1);
   });
 
-  it('where should return values that match filter', () => {
+  it('filter should return values that match filter', () => {
     let sample = [
       {key: '1', value: new SampleData()},
       {key: '2', value: new SampleData()}
     ];
     sample[0].value.foo = 'foo1';
     repository.load(sample);
-    let result = repository.where(item => item.foo == 'foo1');
+    let result = repository.filter(item => item.foo == 'foo1');
     expect(result.length).to.equal(1);
   });
 
@@ -51,6 +51,14 @@ describe('Repository', () => {
     expect(() => { repository.add('1', new SampleData()); }).to.throw();
   });
 
+  it('addRange should add multiple items', () => {
+    repository.addRange([
+      {key: '1', value: new SampleData()},
+      {key: '2', value: new SampleData()}
+    ]);
+    expect(repository.extract().length).to.equal(2);
+  })
+
   it('markCurrent should set state to current', () => {
     repository.add('1', new SampleData());
     repository.markCurrent();
@@ -62,8 +70,28 @@ describe('Repository', () => {
   });
 
   it('find should return value if key exists', () => {
-    repository.upsert('1', new SampleData());
+    repository.add('1', new SampleData());
     expect(repository.find('1')).not.to.be.undefined;
+  });
+
+  it('update should throw error when key does not exist', () => {
+    expect(() => { repository.update('1', (item => item)); }).to.throw();
+  });
+
+  it('update should update existing entity', () => {
+    repository.load([{key: '1', value: new SampleData()}]);
+    repository.update('1', (item => {
+      item.foo = 'baz'; return item;
+    }));
+    expect(repository.find('1')).not.to.be.undefined;
+  });
+
+  it('update should set state to dirty', () => {
+    repository.load([{key: '1', value: new SampleData()}]);
+    repository.update('1', (item => {
+      item.foo = 'baz'; return item;
+    }));
+    expect(repository.state).to.equal('dirty');
   });
 
   it('upsert should create new entity', () => {
@@ -80,23 +108,6 @@ describe('Repository', () => {
 
   it('upsert should set state to dirty', () => {
     repository.upsert('1', new SampleData());
-    expect(repository.state).to.equal('dirty');
-  });
-
-  it('update should throw error when key does not exist', () => {
-    expect(() => { repository.update('1', new SampleData()); }).to.throw();
-  });
-
-  it('update should update existing entity', () => {
-    repository.load([{key: '1', value: new SampleData()}]);
-    let newValue = new SampleData(); newValue.foo = 'baz';
-    repository.update('1', newValue);
-    expect(repository.find('1')).not.to.be.undefined;
-  });
-
-  it('update should set state to dirty', () => {
-    repository.load([{key: '1', value: new SampleData()}]);
-    repository.update('1', new SampleData());
     expect(repository.state).to.equal('dirty');
   });
 

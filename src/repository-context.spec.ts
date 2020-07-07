@@ -63,7 +63,7 @@ describe('ContextBase', () => {
     jsonService.persistEntityNodes.returns(Promise.resolve(sampleData));
     let context = new NoopContextBase("inmemory", jsonService);
     context.initialize().then(_ => {
-      context.models.sample.update('1', new SampleData());
+      context.models.sample.update('1', (item => item));
       return context.saveChanges()
     })
     .then(_ => {

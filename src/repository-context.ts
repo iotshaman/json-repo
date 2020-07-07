@@ -1,11 +1,11 @@
 import { JsonFileService } from "./json-file-service";
 import { IEntityNodeService } from './entity-node-service';
 import { EntityNode } from "./entity-node";
-import { Repository } from "./repository";
+import { IRepository } from "./repository";
 
 export abstract class RepositoryContext {
   
-  abstract models: {[model: string]: Repository<any>};
+  abstract models: {[model: string]: IRepository<any>};
   private dataPath: string;
   private entityNodeService: IEntityNodeService;
 
