@@ -1,6 +1,6 @@
 {
   "name": "json-repo",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "description": "Read and write data to JSON files using the repository pattern. ",
   "scripts": {
     "test": "nyc mocha",
@@ -25,17 +25,17 @@
   },
   "homepage": "https://github.com/iotshaman/json-repo#readme",
   "devDependencies": {
-    "@types/chai": "^4.2.11",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^14.0.14",
-    "@types/sinon": "9.0.4",
+    "@types/chai": "^4.2.14",
+    "@types/mocha": "^8.0.3",
+    "@types/node": "^14.14.2",
+    "@types/sinon": "9.0.8",
     "chai": "^4.2.0",
     "coveralls": "^3.1.0",
-    "mocha": "^8.1.1",
+    "mocha": "^8.2.0",
     "nyc": "^15.1.0",
-    "sinon": "^9.0.2",
-    "ts-node": "^8.10.2",
-    "typescript": "^3.9.5"
+    "sinon": "^9.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   },
   "nyc": {
     "extension": [
